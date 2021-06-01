@@ -1,13 +1,13 @@
-// var express = require('express');
-// var passport = require('passport');
-// const user = require('../model/user');
-// var router = express.Router();
+var express = require('express');
+var passport = require('passport');
+const user = require('../model/user');
+var router = express.Router();
 
-// var libs = process.cwd() + '/libs/';
-// var log = require(libs + 'log')(module);
+var libs = process.cwd() + '/libs/';
+var log = require(libs + 'log')(module);
 
-// var db = require(libs + 'db/mongoose');
-// var User = require(libs + 'model/user');
+var db = require(libs + 'db/mongoose');
+var User = require(libs + 'model/user');
 
 // router.post('/',
 // function(req,res){
@@ -59,4 +59,4 @@
 
     
 // });
-// module.exports = router;
+module.exports = router;
