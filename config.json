@@ -4,7 +4,7 @@
         "tokenLife" : 3600
     },
     "mongoose": {
-        "uri": "mongodb://localhost/apiDB"
+        "uri": "mongodb+srv://defuser:1234@kitaezaapidb.tg8rf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     },
     "default": {
         "user": {
