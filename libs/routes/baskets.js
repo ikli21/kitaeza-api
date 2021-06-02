@@ -101,219 +101,251 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
     let emailInstanceImage="test";
     let emailUser="test";
     var userId = "testId";
-    var table = '<table class="mainTable"><tr><th>item</th><th>image</th><th>description</th></tr>';
-    Basket.findById(req.body.basketId, function (err, basket) {
-        
-        if (!basket) {
-            res.statusCode = 404;
-
-            return res.json({
-                error: 'Basket Not found'
-            });
-        }
-
-        if (!err) {
+    let table = '<table class="mainTable"><tr><th>Наименование</th><th>Изображение</th><th>Количество</th></tr>';
+    // await Promise.all([addOrder(), sendMail()]);
+    async function addOrder(mSecs){
+        return new Promise((resolve,reject)=>{
+            Basket.findById(req.body.basketId, async function (err, basket) {
             
-            userId= basket.user;
-            User.findById(userId,function(err,user){
-                if(!user){
-                    res.statusCode =404;
+        
+                if (!basket) {
+                    res.statusCode = 404;
+        
                     return res.json({
-                        error:"User not found"
+                        error: 'Basket Not found'
                     });
                 }
-                if(!err){
-                    emailUser = user.email;
-                }
-            });
-
-            
-            var order = new Order({
-                // user: req.body.user,
-                // author: req.body.author,
-                user:userId,
-                //// status:
-                // images: req.body.images
-            });
         
-            order.save(function (err) {
                 if (!err) {
-                    log.info('New order created with id: %s', order.id);
-                    ProductInstance.find({"basket":basket.id},function (err, productInstance) {
-                        if (!err) {
-                            productInstance.forEach(element => {
-                                element.order = order.id;
-                                amountCount+=element.amount;
-                                element.save(function (err){
-                                    if(!err) {
-                                        log.info('productInstance updated, id:',element.id);
-                                        let productId = element.product;
-                                        Product.findById(productId, function (err, product) {
-
-                                            if (!product) {
-                                                res.statusCode = 404;
-                                    
-                                                return res.json({
-                                                    error: 'Product Not found'
-                                                });
-                                            }
-                                    
-                                            if (!err) {
-                                                emailInstanceImage = product.imageurl;
-                                                product.amount = product.amount - element.amount;
-                                                product.save(function (err){
-                                                    if(!err) {
-                                                        log.info('product updated, id:',product.id);
-                                                        table += ('<tr>');
-                                                    table += ('<td>' + product.title + '</td>');
-                                                    table += ('<td><img src="' + emailInstanceImage + '"></td>');
-                                                    table += ('<td>' + element.amount + '</td>');
-                                                    table += ('</tr>');
-                                                    table += '</table>';
-                                                    }
-                                                    else {
-                                                        if (err.name === 'ValidationError') {
-                                                            res.statusCode = 400;
-                                                            res.json({
-                                                                error: 'Validation error'
-                                                            });
-                                                        } else {
-                                                            res.statusCode = 500;
-                                            
-                                                            log.error('Internal error(%d): %s', res.statusCode, err.message);
-                                            
-                                                            res.json({
-                                                                error: 'Server error'
-                                                            });
-                                                        }
-                                                    }
-                                                });
-                                            } 
-                                    else {
-                                        res.statusCode = 500;
-                                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                            
-                                        return res.json({
-                                            error: 'Server error'
-                                        });
-                                    }
-                                });
-                                    }
-                                    else {
-                                        if (err.name === 'ValidationError') {
-                                            res.statusCode = 400;
-                                            res.json({
-                                                error: 'Validation error'
-                                            });
-                                        } else {
-                                            res.statusCode = 500;
-                            
-                                            log.error('Internal error(%d): %s', res.statusCode, err.message);
-                            
-                                            res.json({
-                                                error: 'Server error'
-                                            });
-                                        }
-                                    }
-                                });
-                                
-                                
-                            });
-                        } else {
-                            res.statusCode = 500;
-                
-                            log.error('Internal error(%d): %s', res.statusCode, err.message);
-                
+                    
+                    userId= basket.user;
+                    await User.findById(userId,async function (err,user){
+                        if(!user){
+                            res.statusCode =404;
                             return res.json({
-                                error: 'Server error'
+                                error:"User not found"
                             });
                         }
+                        if(!err){
+                            emailUser = user.email;
+                        }
                     });
-                } else {
-                    if (err.name === 'ValidationError') {
-                        res.statusCode = 400;
-                        res.json({
-                            error: 'Validation error'
-                        });
-                    } else {
-                        res.statusCode = 500;
         
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                    
+                    var order = new Order({
+                        // user: req.body.user,
+                        // author: req.body.author,
+                        user:userId,
+                        //// status:
+                        // images: req.body.images
+                    });
+                
+                    await order.save(async function (err) {
+                        if (!err) {
+                            log.info('New order created with id: %s', order.id);
+                            await ProductInstance.find({"basket":basket.id},async function (err, productInstance) {
+                                if (!err) {
+                                    productInstance.forEach(async element  => {
+                                        element.order = order.id;
+                                        amountCount+=element.amount;
+                                        await element.save(async function (err){
+                                            if(!err) {
+                                                log.info('productInstance updated, id:',element.id);
+                                                let productId = element.product;
+                                                await Product.findById(productId,async function (err, product) {
         
-                        res.json({
-                            error: 'Server error'
-                        });
-                    }
+                                                    if (!product) {
+                                                        res.statusCode = 404;
+                                            
+                                                        return res.json({
+                                                            error: 'Product Not found'
+                                                        });
+                                                    }
+                                            
+                                                    if (!err) {
+                                                        emailInstanceImage = product.imageurl;
+                                                        product.amount = product.amount - element.amount;
+                                                        await product.save(async function (err){
+                                                            if(!err) {
+                                                                log.info('product updated, id:',product.id);
+                                                                table += ('<tr>');
+                                                            table += ('<td>' + product.title + '</td>');
+                                                            table += ('<td><img src="' + emailInstanceImage + '"></td>');
+                                                            table += ('<td>' + element.amount + '</td>');
+                                                            table += ('</tr>');
+                                                            log.info(table);
+                                                            // await new Promise((resolve, reject) => setTimeout(resolve, 3000));
+                                                            // return table;
+                                                            setTimeout(() => {
+                                                                resolve();
+                                                            }, mSecs);
+                                                            
+                                                            }
+                                                            else {
+                                                                if (err.name === 'ValidationError') {
+                                                                    res.statusCode = 400;
+                                                                    res.json({
+                                                                        error: 'Validation error'
+                                                                    });
+                                                                } else {
+                                                                    res.statusCode = 500;
+                                                    
+                                                                    log.error('Internal error(%d): %s', res.statusCode, err.message);
+                                                    
+                                                                    res.json({
+                                                                        error: 'Server error'
+                                                                    });
+                                                                }
+                                                            }
+                                                        });
+                                                    } 
+                                            else {
+                                                res.statusCode = 500;
+                                                log.error('Internal error(%d): %s', res.statusCode, err.message);
+                                    
+                                                return res.json({
+                                                    error: 'Server error'
+                                                });
+                                            }
+                                        });
+                                            }
+                                            else {
+                                                if (err.name === 'ValidationError') {
+                                                    res.statusCode = 400;
+                                                    res.json({
+                                                        error: 'Validation error'
+                                                    });
+                                                } else {
+                                                    res.statusCode = 500;
+                                    
+                                                    log.error('Internal error(%d): %s', res.statusCode, err.message);
+                                    
+                                                    res.json({
+                                                        error: 'Server error'
+                                                    });
+                                                }
+                                            }
+                                        });
+                                        
+                                        
+                                    });
+                                    
+                                } else {
+                                    res.statusCode = 500;
+                        
+                                    log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        
+                                    return res.json({
+                                        error: 'Server error'
+                                    });
+                                }
+                            });
+                        } else {
+                            if (err.name === 'ValidationError') {
+                                res.statusCode = 400;
+                                res.json({
+                                    error: 'Validation error'
+                                });
+                            } else {
+                                res.statusCode = 500;
+                
+                                log.error('Internal error(%d): %s', res.statusCode, err.message);
+                
+                                res.json({
+                                    error: 'Server error'
+                                });
+                            }
+                        }
+                    });
+                //        //emailSender
+                       
                 }
+                else {
+                    res.statusCode = 500;
+                    log.error('Internal error(%d): %s', res.statusCode, err.message);
+        
+                    return res.json({
+                        error: 'Server error'
+                    });
+                }
+                
             });
-        //        //emailSender
-               let output = `
-               <p>У вас новый заказ!</p>
-               <h3>Контактные данные</h3>
-               <ul>
-               <li>Компания: ИП Аверьянов Д.О.</li>
-               <li>Email: kitaeza@mail.ru</li>
-               <li>Телефон: 2282228228</li>
-               </ul>
-               <h3>Сообщение</h3>
-               <p>сообщение</p>
-               `;
-               output = output+table;  
-               //   <h3>Headers</h3>
-               // <ul>  
-               //   <li>cookie: ${req.headers.cookie}</li>
-               //   <li>user-agent: ${req.headers["user-agent"]}</li>
-               //   <li>referer: ${req.headers["referer"]}</li>
-               //   <li>IP: ${req.ip}</li>
-               // </ul>
-               
-               let smtpTransport;
-               try {
-                   smtpTransport = nodemailer.createTransport({
-                   host:"smtp.mail.ru",
-                   port:465,
-                   secure:true,
-                   auth: {
-                       user: "sergej.sergeevbo@mail.ru",
-                       pass: "17klop3d8"
-                   }
-                   });
-               } catch (e) {
-                   return console.log('Error: ' + e.name + ":" + e.message);
-               }
-               
-               let mailOptions = {
-                   from: 'sergej.sergeevbo@mail.ru', // sender address
-                   to: 'ikli4ever@gmail.com', // list of receivers
-                   subject: 'У вас новый заказ!', // Subject line
-                   text: 'Пожалуйста свяжитесь с нами, если это ваш заказ', // plain text body
-                   html: output // html body
-               };
-               
-               smtpTransport.sendMail(mailOptions, (error, info) => {
-                   if (error) {
-                   return console.log(error);
-                //    return console.log('Error');
-                   } else {
-                   console.log('Message sent: %s', info.messageId);
-                   console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-                   }
-               res.render('feed-ok', {msg: 'В ближайшее время мы с Вами свяжемся и ответим на все вопросы'});
-               res.redirect('http://baedeker.club');
-           });
-           return res.json({
-               status:"ok"
-           })
-        }
-        else {
-            res.statusCode = 500;
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
+        });
+        
+    
+        
+    }
+    async function  sendEmail(){
+        // let promise =  new Promise((resolve, reject) => setTimeout(resolve(addOrder()), 3000));
 
-            return res.json({
-                error: 'Server error'
+        // let table = await promise;
+        await addOrder(3000);
+        let output = `
+        <p>У вас новый заказ!</p>
+        <h3>Контактные данные</h3>
+        <ul>
+        <li>Компания: ИП Аверьянов Д.О.</li>
+        <li>Email: kitaeza@mail.ru</li>
+        <li>Телефон: 2282228228</li>
+        </ul>
+        <h3>Сообщение</h3>
+        <p>Ваш заказ успешно зарезервирован</p>
+        `+table+('</table>');
+        log.info(output);
+          
+        //   <h3>Headers</h3>
+        // <ul>  
+        //   <li>cookie: ${req.headers.cookie}</li>
+        //   <li>user-agent: ${req.headers["user-agent"]}</li>
+        //   <li>referer: ${req.headers["referer"]}</li>
+        //   <li>IP: ${req.ip}</li>
+        // </ul>
+        
+        let smtpTransport;
+        try {
+            smtpTransport = nodemailer.createTransport({
+            host:"smtp.mail.ru",
+            port:465,
+            secure:true,
+            auth: {
+                user: "sergej.sergeevbo@mail.ru",
+                pass: "17klop3d8"
+            }
             });
+        } catch (e) {
+            return console.log('Error: ' + e.name + ":" + e.message);
         }
+        
+        let mailOptions = {
+            from: 'sergej.sergeevbo@mail.ru', // sender address
+            to: 'ikli4ever@gmail.com', // list of receivers
+            subject: 'У вас новый заказ!', // Subject line
+            text: 'Пожалуйста свяжитесь с нами, если это ваш заказ', // plain text body
+            html: output // html body
+        };
+        
+        smtpTransport.sendMail(mailOptions, (error, info) => {
+            if (error) {
+            return console.log(error);
+         //    return console.log('Error');
+            } else {
+            console.log('Message sent: %s', info.messageId);
+            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+            }
+        res.render('feed-ok', {msg: 'В ближайшее время мы с Вами свяжемся и ответим на все вопросы'});
+        res.redirect('http://baedeker.club');
     });
+    return res.json({
+        status:"ok"
+    });
+    }
+    //Как вариант
+    // addOrder().then(sendEmail(),log.info("Error"));
+    sendEmail();
+    
+    
+
+    
     
 // return res.json({status:'OK'});
 });
