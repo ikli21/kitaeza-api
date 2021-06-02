@@ -11,7 +11,8 @@ const Order = require(libs+"model/order");
 const Product = require(libs+"model/product");
 const ProductInstance = require(libs+"model/productInstance");
 const nodemailer = require('nodemailer');
-let User = require(libs+"model/user");
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
 
 // List all baskets
 router.get('/', auth.required, function (req, res) {
@@ -96,6 +97,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
 
     //   emailUser = user.email;
     // });
+    let amountCount;
     let emailInstanceImage="test";
     let emailUser="test";
     var userId = "testId";
@@ -141,9 +143,61 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
                         if (!err) {
                             productInstance.forEach(element => {
                                 element.order = order.id;
+                                amountCount+=element.amount;
                                 element.save(function (err){
                                     if(!err) {
                                         log.info('productInstance updated, id:',element.id);
+                                        let productId = element.product;
+                                        Product.findById(productId, function (err, product) {
+
+                                            if (!product) {
+                                                res.statusCode = 404;
+                                    
+                                                return res.json({
+                                                    error: 'Product Not found'
+                                                });
+                                            }
+                                    
+                                            if (!err) {
+                                                emailInstanceImage = product.imageurl;
+                                                product.amount = product.amount - element.amount;
+                                                product.save(function (err){
+                                                    if(!err) {
+                                                        log.info('product updated, id:',product.id);
+                                                        table += ('<tr>');
+                                                    table += ('<td>' + product.title + '</td>');
+                                                    table += ('<td><img src="' + emailInstanceImage + '"></td>');
+                                                    table += ('<td>' + element.amount + '</td>');
+                                                    table += ('</tr>');
+                                                    table += '</table>';
+                                                    }
+                                                    else {
+                                                        if (err.name === 'ValidationError') {
+                                                            res.statusCode = 400;
+                                                            res.json({
+                                                                error: 'Validation error'
+                                                            });
+                                                        } else {
+                                                            res.statusCode = 500;
+                                            
+                                                            log.error('Internal error(%d): %s', res.statusCode, err.message);
+                                            
+                                                            res.json({
+                                                                error: 'Server error'
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            } 
+                                    else {
+                                        res.statusCode = 500;
+                                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                            
+                                        return res.json({
+                                            error: 'Server error'
+                                        });
+                                    }
+                                });
                                     }
                                     else {
                                         if (err.name === 'ValidationError') {
@@ -162,55 +216,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
                                         }
                                     }
                                 });
-                                let productId = element.product;
-                                Product.findById(productId, function (err, product) {
-
-                                    if (!product) {
-                                        res.statusCode = 404;
-                            
-                                        return res.json({
-                                            error: 'Product Not found'
-                                        });
-                                    }
-                            
-                                    if (!err) {
-                                        emailInstanceImage = product.imageurl;
-                                        product.amount = product.amount - productInstance.amount;
-                                        product.save(function (err){
-                                            if(!err) {
-                                                log.info('product updated, id:',element.id);
-                                            }
-                                            else {
-                                                if (err.name === 'ValidationError') {
-                                                    res.statusCode = 400;
-                                                    res.json({
-                                                        error: 'Validation error'
-                                                    });
-                                                } else {
-                                                    res.statusCode = 500;
-                                    
-                                                    log.error('Internal error(%d): %s', res.statusCode, err.message);
-                                    
-                                                    res.json({
-                                                        error: 'Server error'
-                                                    });
-                                                }
-                                            }
-                                        });
-                                        table += ('<tr>');
-                                        table += ('<td>' + product.title + '</td>');
-                                        table += ('<td><img src="' + emailInstanceImage + '"></td>');
-                                        table += ('<td>' + element.amount + '</td>');
-                                        table += ('</tr>');
-                                    } else {
-                                        res.statusCode = 500;
-                                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                            
-                                        return res.json({
-                                            error: 'Server error'
-                                        });
-                                    }
-                                });
+                                
                                 
                             });
                         } else {
@@ -240,7 +246,66 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
                     }
                 }
             });
-        } else {
+        //        //emailSender
+               let output = `
+               <p>У вас новый заказ!</p>
+               <h3>Контактные данные</h3>
+               <ul>
+               <li>Компания: ИП Аверьянов Д.О.</li>
+               <li>Email: kitaeza@mail.ru</li>
+               <li>Телефон: 2282228228</li>
+               </ul>
+               <h3>Сообщение</h3>
+               <p>сообщение</p>
+               `;
+               output = output+table;  
+               //   <h3>Headers</h3>
+               // <ul>  
+               //   <li>cookie: ${req.headers.cookie}</li>
+               //   <li>user-agent: ${req.headers["user-agent"]}</li>
+               //   <li>referer: ${req.headers["referer"]}</li>
+               //   <li>IP: ${req.ip}</li>
+               // </ul>
+               
+               let smtpTransport;
+               try {
+                   smtpTransport = nodemailer.createTransport({
+                   host:"smtp.mail.ru",
+                   port:465,
+                   secure:true,
+                   auth: {
+                       user: "sergej.sergeevbo@mail.ru",
+                       pass: "17klop3d8"
+                   }
+                   });
+               } catch (e) {
+                   return console.log('Error: ' + e.name + ":" + e.message);
+               }
+               
+               let mailOptions = {
+                   from: 'sergej.sergeevbo@mail.ru', // sender address
+                   to: 'ikli4ever@gmail.com', // list of receivers
+                   subject: 'У вас новый заказ!', // Subject line
+                   text: 'Пожалуйста свяжитесь с нами, если это ваш заказ', // plain text body
+                   html: output // html body
+               };
+               
+               smtpTransport.sendMail(mailOptions, (error, info) => {
+                   if (error) {
+                   return console.log(error);
+                //    return console.log('Error');
+                   } else {
+                   console.log('Message sent: %s', info.messageId);
+                   console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+                   }
+               res.render('feed-ok', {msg: 'В ближайшее время мы с Вами свяжемся и ответим на все вопросы'});
+               res.redirect('http://baedeker.club');
+           });
+           return res.json({
+               status:"ok"
+           })
+        }
+        else {
             res.statusCode = 500;
             log.error('Internal error(%d): %s', res.statusCode, err.message);
 
@@ -249,62 +314,8 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
             });
         }
     });
-    table += '</table>';
-
-    //emailSender
-    let output = `
-    <p>У вас новый заказ!</p>
-    <h3>Контактные данные</h3>
-    <ul>
-      <li>Компания: ИП Аверьянов Д.О.</li>
-      <li>Email: kitaeza@mail.ru</li>
-      <li>Телефон: 2282228228</li>
-    </ul>
-    <h3>Сообщение</h3>
-    <p>сообщение</p>
-      `;
-    output = output+table;  
-    //   <h3>Headers</h3>
-    // <ul>  
-    //   <li>cookie: ${req.headers.cookie}</li>
-    //   <li>user-agent: ${req.headers["user-agent"]}</li>
-    //   <li>referer: ${req.headers["referer"]}</li>
-    //   <li>IP: ${req.ip}</li>
-    // </ul>
     
-      let smtpTransport;
-      try {
-        smtpTransport = nodemailer.createTransport({
-          service:'Gmail',
-          auth: {
-            user: "sergej.sergeevbo@gmail.com",
-            pass: "17klop3d8"
-          }
-        });
-      } catch (e) {
-        return console.log('Error: ' + e.name + ":" + e.message);
-      }
-    
-      let mailOptions = {
-        from: 'sergej.sergeevbo@gmail.com', // sender address
-        to: emailUser, // list of receivers
-        subject: 'У вас новый заказ!', // Subject line
-        text: 'Пожалуйста свяжитесь с нами, если это ваш заказ', // plain text body
-        html: output // html body
-      };
-    
-      smtpTransport.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          // return console.log(error);
-          return console.log('Error');
-        } else {
-          console.log('Message sent: %s', info.messageId);
-          console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-        }
-    res.render('feed-ok', {msg: 'В ближайшее время мы с Вами свяжемся и ответим на все вопросы'});
-    res.redirect('http://baedeker.club');
-});
-return res.json({status:'OK'});
+// return res.json({status:'OK'});
 });
 
 // Get basket
