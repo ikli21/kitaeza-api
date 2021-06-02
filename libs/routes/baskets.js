@@ -318,7 +318,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
         
         let mailOptions = {
             from: 'sergej.sergeevbo@mail.ru', // sender address
-            to: 'ikli4ever@gmail.com', // list of receivers
+            to: emailUser, // list of receivers
             subject: 'У вас новый заказ!', // Subject line
             text: 'Пожалуйста свяжитесь с нами, если это ваш заказ', // plain text body
             html: output // html body
