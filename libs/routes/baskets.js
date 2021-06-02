@@ -11,7 +11,7 @@ const Order = require(libs+"model/order");
 const Product = require(libs+"model/product");
 const ProductInstance = require(libs+"model/productInstance");
 const nodemailer = require('nodemailer');
-const User = require(libs+"model/user");
+let User = require(libs+"model/user");
 
 // List all baskets
 router.get('/', auth.required, function (req, res) {
