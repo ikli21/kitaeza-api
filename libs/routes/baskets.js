@@ -103,7 +103,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
             res.statusCode = 404;
 
             return res.json({
-                error: 'Not found'
+                error: 'Basket Not found'
             });
         }
 
@@ -152,7 +152,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
                                         res.statusCode = 404;
                             
                                         return res.json({
-                                            error: 'Not found'
+                                            error: 'Product Not found'
                                         });
                                     }
                             
@@ -287,7 +287,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
     res.render('feed-ok', {msg: 'В ближайшее время мы с Вами свяжемся и ответим на все вопросы'});
     res.redirect('http://baedeker.club');
 });
-
+return res.json({status:'OK'});
 });
 
 // Get basket
