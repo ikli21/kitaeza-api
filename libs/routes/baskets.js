@@ -97,6 +97,8 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
     //   emailUser = user.email;
     // });
     let emailInstanceImage="test";
+    let emailUser="test";
+    var userId = "testId";
     var table = '<table class="mainTable"><tr><th>item</th><th>image</th><th>description</th></tr>';
     Basket.findById(req.body.basketId, function (err, basket) {
         
@@ -109,8 +111,8 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
         }
 
         if (!err) {
-            let emailUser="test";
-            var userId= basket.user;
+            
+            userId= basket.user;
             User.findById(userId,function(err,user){
                 if(!user){
                     res.statusCode =404;
