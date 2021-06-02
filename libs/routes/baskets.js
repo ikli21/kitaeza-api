@@ -87,18 +87,7 @@ router.post('/', auth.required, function (req, res) {
 router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
     // const { payload: { id } } = req;
     // let currenUserId = req.body.userId;
-    let emailUser;
-    User.findById(currenUserId,function(err,user){
-        if(!user){
-            res.statusCode =404;
-            return res.json({
-                error:"User not found"
-            });
-        }
-        if(!err){
-            emailUser = user.email;
-        }
-    });
+    
     // User.findById(id)
     // .then((user) => {
     //   if(!user) {
@@ -120,7 +109,21 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
         }
 
         if (!err) {
+            let emailUser;
             var userId= basket.user;
+            User.findById(userId,function(err,user){
+                if(!user){
+                    res.statusCode =404;
+                    return res.json({
+                        error:"User not found"
+                    });
+                }
+                if(!err){
+                    emailUser = user.email;
+                }
+            });
+
+            
             var order = new Order({
                 // user: req.body.user,
                 // author: req.body.author,
