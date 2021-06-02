@@ -96,7 +96,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
 
     //   emailUser = user.email;
     // });
-    let emailInstanceImage;
+    let emailInstanceImage="test";
     var table = '<table class="mainTable"><tr><th>item</th><th>image</th><th>description</th></tr>';
     Basket.findById(req.body.basketId, function (err, basket) {
         
@@ -109,7 +109,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
         }
 
         if (!err) {
-            let emailUser;
+            let emailUser="test";
             var userId= basket.user;
             User.findById(userId,function(err,user){
                 if(!user){
