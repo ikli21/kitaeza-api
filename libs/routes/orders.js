@@ -26,6 +26,24 @@ router.get('/', auth.required, function (req, res) {
     });
 });
 
+// List all baskets
+router.get('/ordersbyuser', auth.required, function (req, res) {
+
+    Order.find({"user":req.body.userId}, function (err, order) {
+        if (!err) {
+            return res.json(order);
+        } else {
+            res.statusCode = 500;
+
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+});
+
 // Create basket
 router.post('/', auth.required, function (req, res) {
 

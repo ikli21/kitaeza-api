@@ -1,20 +1,20 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var Image = new Schema({
-    kind: {
-        type: String,
-        enum: ['thumbnail', 'detail'],
-        required: true
-    },
-    url: { type: String, required: true }
-});
+// var Image = new Schema({
+//     kind: {
+//         type: String,
+//         enum: ['thumbnail', 'detail'],
+//         required: true
+//     },
+//     url: { type: String, required: true }
+// });
 
 var Product = new Schema({
     title: { type: String, required: true },
     category: {type: Schema.ObjectId, ref: 'Category', required: true},
     description: { type: String, required: true },
-    images: [Image],
+    imageurl: {type:String,required:true},
     price:{type:Number,required:true},
     amount:{type:Number,required:true,default:0},
     modified: { type: Date, default: Date.now }

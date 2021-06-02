@@ -27,7 +27,57 @@ router.get('/', auth.required, function (req, res) {
         }
     });
 });
+//List Instances by order id
+router.get('/orderId', auth.required, function (req, res) {
 
+    ProductInstance.find({"order":req.body.orderId},function (err, productInstance) {
+        if (!err) {
+            return res.json(productInstance);
+        } else {
+            res.statusCode = 500;
+
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+});
+//List instances by basketId
+router.get('/basketId', auth.required, function (req, res) {
+
+    ProductInstance.find({"basket":req.body.basketId},function (err, productInstance) {
+        if (!err) {
+            return res.json(productInstance);
+        } else {
+            res.statusCode = 500;
+
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+});
+
+router.get('/', auth.required, function (req, res) {
+
+    ProductInstance.find(function (err, productInstance) {
+        if (!err) {
+            return res.json(productInstance);
+        } else {
+            res.statusCode = 500;
+
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+});
 // Create basket
 router.post('/', auth.required, function (req, res) {
 
