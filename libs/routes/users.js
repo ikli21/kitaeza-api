@@ -5,9 +5,9 @@ const auth = require('./auth');
 const User = mongoose.model('User');
 
 //POST new user route (optional, everyone has access)
-router.post('/', auth.optional, (req, res, next) => {
+router.post('/', auth.optional,async (req, res, next)  => {
   const { body: { user } } = req;
-
+  
   if(!user.email) {
     return res.status(422).json({
       errors: {
@@ -23,13 +23,23 @@ router.post('/', auth.optional, (req, res, next) => {
       },
     });
   }
+  await User.findOne({"email":user.email},async function (err, userCheck) {
+    if (userCheck!=null) {
+        return await res.status(422).json({
+          errors: {
+            email: 'пользователь с таким email уже существует',
+          },
+        });
+    } else {
+      const finalUser = new User(user);
 
-  const finalUser = new User(user);
-
-  finalUser.setPassword(user.password);
-
-  return finalUser.save()
-    .then(() => res.json({ user: finalUser.toAuthJSON() }));
+      await finalUser.setPassword(user.password);
+    
+      return await finalUser.save()
+        .then(() => res.json({ user: finalUser.toAuthJSON() }));
+    }
+});
+  
 });
 
 //POST login route (optional, everyone has access)
