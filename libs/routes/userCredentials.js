@@ -36,7 +36,8 @@ router.post('/', auth.required, function (req, res) {
         user: req.body.user,
     email: req.body.email,
     vkontakte: req.body.vkontakte,
-   
+    name: req.body.name,
+    surname: req.body.surname,
     telegram:req.body.telegram,
     whatsapp:req.body.whatsapp,
         viber: req.body.viber
@@ -113,7 +114,8 @@ router.put('/:id', auth.required, function (req, res) {
         userCredential.email= req.body.email;
     userCredential.viber= req.body.viber;
     userCredential.telegram= req.body.telegram;
-   
+   userCredential.name = req.body.name;
+   userCredential.surname = req.body.surname;
     userCredential.whatsapp=req.body.whatsapp;
     userCredential.vkontakte=req.body.vkontakte;
         

@@ -19,6 +19,9 @@ var UserCredential = new Schema({
     telegram: {type: String, required: false,default:"Не добавлено"},
     whatsapp: {type: String, required: false,default:"Не добавлено"},
     viber: {type: String, required: false,default:"Не добавлено"},
+    name:{type:String,default:"Не добавлено"},
+    surname:{type:String,default:"Не добавлено"},
+    
     // order: {type: Schema.ObjectId, ref: 'Order', required: true},
     // basket: {type: Schema.ObjectId, ref: 'Basket', required: true},
     // amount:{type:Int32Array,required:true,default:0},

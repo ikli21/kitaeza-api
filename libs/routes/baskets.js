@@ -115,7 +115,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
                         error: 'Basket Not found'
                     });
                 }
-        
+    
                 if (!err) {
                     
                     userId= basket.user;
@@ -146,6 +146,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
                             await ProductInstance.find({"basket":basket.id},async function (err, productInstance) {
                                 if (!err) {
                                     productInstance.forEach(async element  => {
+                                        element.basket = "1";
                                         element.order = order.id;
                                         amountCount+=element.amount;
                                         await element.save(async function (err){
@@ -184,6 +185,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
                                                             else {
                                                                 if (err.name === 'ValidationError') {
                                                                     res.statusCode = 400;
+                                                                    reject();
                                                                     res.json({
                                                                         error: 'Validation error'
                                                                     });

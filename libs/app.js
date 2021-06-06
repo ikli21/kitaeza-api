@@ -9,7 +9,9 @@ const session = require('express-session');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const errorHandler = require('errorhandler');
-
+var argv = require('minimist')(process.argv.slice(2));
+var swagger = require("swagger-node-express");
+// var bodyParser = require( 'body-parser' );
 var libs = process.cwd() + '/libs/';
 require(libs + 'auth/auth');
 
@@ -31,7 +33,31 @@ require('./config/passport');
 require('./routes/auth');
 
 var app = express();
+var subpath = express();
+// app.use(bodyParser());
+app.use("/v1", subpath);
+app.use(express.static('dist'));
+swagger.setAppHandler(subpath);
+swagger.setApiInfo({
+    title: "Kitaeza-API",
+    description: "REST-API для маркетплейс приложения",
+    termsOfServiceUrl: "",
+    contact: "sergej.sergeevbo@mail.ru",
+    license: "",
+    licenseUrl: ""
+});
+subpath.get('/', function (req, res) {
+    res.sendfile("./dist/index.html");
+});
+swagger.configureSwaggerPaths('', 'api-docs', '');
 
+var domain = 'localhost';
+if(argv.domain !== undefined)
+    domain = argv.domain;
+else
+    console.log('No --domain=xxx specified, taking default hostname "localhost".');
+var applicationUrl = 'http://' + domain;
+swagger.configure(applicationUrl, '1.0.0');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
