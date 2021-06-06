@@ -29,6 +29,7 @@ var products = require('./routes/products');
 var productInstances = require('./routes/productInstances');
 var register = require('./routes/register');
 var productsCharacteristics = require('./routes/productsCharacteristics');
+var userCredentials = require('./routes/userCredentials');
 require('./config/passport');
 require('./routes/auth');
 
@@ -75,6 +76,7 @@ app.use('/api/productInstances', productInstances);
 app.use('/api/register', register);
 app.use('/api/oauth/token', oauth2.token);
 app.use('/api/productsCharacteristics',productsCharacteristics);
+app.use('/api/userCredentials',userCredentials);
 
 
 // Catch 404 and forward to error handler
