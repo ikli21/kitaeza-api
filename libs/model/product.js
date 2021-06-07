@@ -12,6 +12,7 @@ var Schema = mongoose.Schema;
 
 var Product = new Schema({
     title: { type: String, required: true },
+    subtitle:{type:String, required: false },
     category: {type: Schema.ObjectId, ref: 'Category', required: true},
     description: { type: String, required: true },
     imageurl: {type:String,required:true},

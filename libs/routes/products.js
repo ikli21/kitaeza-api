@@ -33,6 +33,7 @@ router.post('/', auth.required, function (req, res) {
     var product = new Product({
         // user: req.body.user,
         // author: req.body.author,
+        subtitle: req.body.subtitle,
         title: req.body.title,
     category: req.body.category,
     description: req.body.description,
@@ -128,7 +129,7 @@ router.put('/:id', auth.required, function (req, res) {
         product.title= req.body.title;
     product.category= req.body.category;
     product.description= req.body.description;
-   
+    product.subtitle = req.body.subtitle;
     product.price=req.body.price;
     product.amount=req.body.amount;
         product.imageurl= req.body.imageurl;
