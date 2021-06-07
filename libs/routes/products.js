@@ -39,7 +39,7 @@ router.post('/', auth.required, function (req, res) {
    
     price:req.body.price,
     amount:req.body.amount,
-        imageurl: req.body.images
+        imageurl: req.body.imageurl
     });
 
     product.save(function (err) {
