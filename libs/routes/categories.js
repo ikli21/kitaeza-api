@@ -62,7 +62,6 @@ router.post('/', auth.required, function (req, res) {
         }
     });
 });
-
 // Get basket
 router.get('/:id', function (req, res) {
     var categoryId = req.params.id;

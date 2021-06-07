@@ -8,7 +8,7 @@ var log = require(libs + 'log')(module);
 var auth = require("./auth");
 var db = require(libs + 'db/mongoose');
 var Product = require(libs + 'model/product');
-
+var Category = require(libs+'model/category')
 // List all baskets
 router.get('/',  function (req, res) {
 
@@ -96,7 +96,22 @@ router.get('/:id',  function (req, res) {
         }
     });
 });
+router.get('/:categoryId',  function (req, res) {
 
+    Product.find({"category":req.params.categoryId}, function (err, product) {
+        if (!err) {
+            return res.json(product);
+        } else {
+            res.statusCode = 500;
+
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+});
 // Update basket
 router.put('/:id', auth.required, function (req, res) {
     var productId = req.params.id;
