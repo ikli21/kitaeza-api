@@ -96,7 +96,7 @@ router.get('/:id',  function (req, res) {
         }
     });
 });
-router.get('/:categoryId',  function (req, res) {
+router.get('/productCategory/:categoryId',  function (req, res) {
 
     Product.find({"category":req.params.categoryId}, function (err, product) {
         if (!err) {
