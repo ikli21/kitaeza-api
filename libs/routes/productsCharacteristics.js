@@ -27,9 +27,9 @@ router.get('/',  function (req, res) {
 });
 
 // List all baskets
-router.get('/productCharacteristicsbyproduct',  function (req, res) {
+router.get('/productCharacteristicsbyproduct/:productId',  function (req, res) {
 
-    ProductCharacteristics.find({"product":req.body.product}, function (err, productCharacteristics) {
+    ProductCharacteristics.find({"product":req.params.productId}, function (err, productCharacteristics) {
         if (!err) {
             return res.json(productCharacteristics);
         } else {
