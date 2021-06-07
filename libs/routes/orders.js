@@ -9,7 +9,7 @@ var db = require(libs + 'db/mongoose');
 var Order = require(libs + 'model/order');
 
 // List all baskets
-router.get('/', auth.required, function (req, res) {
+router.get('/', function (req, res) {
 
     Order.find(function (err, order) {
         if (!err) {
@@ -27,7 +27,7 @@ router.get('/', auth.required, function (req, res) {
 });
 
 // List all baskets
-router.get('/ordersbyuser', auth.required, function (req, res) {
+router.get('/ordersbyuser',  function (req, res) {
 
     Order.find({"user":req.body.userId}, function (err, order) {
         if (!err) {
@@ -82,7 +82,7 @@ router.post('/', auth.required, function (req, res) {
 });
 
 // Get basket
-router.get('/:id', auth.required, function (req, res) {
+router.get('/:id',  function (req, res) {
 
     Order.findById(req.params.id, function (err, order) {
 

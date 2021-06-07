@@ -9,7 +9,7 @@ var db = require(libs + 'db/mongoose');
 var Category = require(libs + 'model/category');
 
 // List all baskets
-router.get('/', auth.required, function (req, res) {
+router.get('/', function (req, res) {
 
     Category.find(function (err, category) {
         if (!err) {
@@ -64,7 +64,7 @@ router.post('/', auth.required, function (req, res) {
 });
 
 // Get basket
-router.get('/:id', auth.required, function (req, res) {
+router.get('/:id', function (req, res) {
     var categoryId = req.params.id;
     Category.findById(categoryId, function (err, category) {
 

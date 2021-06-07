@@ -10,7 +10,7 @@ var db = require(libs + 'db/mongoose');
 var UserCredential = require(libs + 'model/userCredential');
 
 // List all baskets
-router.get('/', passport.authenticate('bearer', { session: false }), function (req, res) {
+router.get('/',  function (req, res) {
 
     UserCredential.find(function (err, userCredential) {
         if (!err) {
@@ -70,7 +70,7 @@ router.post('/', auth.required, function (req, res) {
 });
 
 // Get basket
-router.get('/:id', auth.required, function (req, res) {
+router.get('/:id',  function (req, res) {
 
     UserCredential.findById(req.params.id, function (err, userCredential) {
 

@@ -11,7 +11,7 @@ var db = require(libs + 'db/mongoose');
 var ProductInstance = require(libs + 'model/productInstance');
 
 // List all baskets
-router.get('/', auth.required,async function (req, res) {
+router.get('/', async function (req, res) {
 
     await ProductInstance.find(function (err, productInstance) {
         if (!err) {
@@ -28,7 +28,7 @@ router.get('/', auth.required,async function (req, res) {
     });
 });
 //List Instances by order id
-router.get('/orderId', auth.required,async function (req, res) {
+router.get('/orderId', async function (req, res) {
 
     await ProductInstance.find({"order":req.body.orderId},function (err, productInstance) {
         if (!err) {
@@ -45,7 +45,7 @@ router.get('/orderId', auth.required,async function (req, res) {
     });
 });
 //List instances by basketId
-router.get('/basketId', auth.required,async function (req, res) {
+router.get('/basketId', async function (req, res) {
 
     await ProductInstance.find({"basket":req.body.basketId},function (err, productInstance) {
         if (!err) {
@@ -62,7 +62,7 @@ router.get('/basketId', auth.required,async function (req, res) {
     });
 });
 
-router.get('/', auth.required,async function (req, res) {
+router.get('/',async function (req, res) {
 
     await ProductInstance.find(function (err, productInstance) {
         if (!err) {
@@ -118,7 +118,7 @@ router.post('/', auth.required,async function (req, res) {
 });
 
 // Get basket
-router.get('/:id', auth.required,async function (req, res) {
+router.get('/:id', async function (req, res) {
 
     await ProductInstance.findById(req.params.id,async function (err, productInstance) {
 

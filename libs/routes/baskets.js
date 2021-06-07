@@ -15,7 +15,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
 // List all baskets
-router.get('/', auth.required, function (req, res) {
+router.get('/',  function (req, res) {
 
     Basket.find(function (err, baskets) {
         if (!err) {
@@ -32,7 +32,7 @@ router.get('/', auth.required, function (req, res) {
     });
 });
 // List all baskets by user
-router.get('/basketsbyuser', auth.required, function (req, res) {
+router.get('/basketsbyuser',  function (req, res) {
 
     Basket.find({"user":req.body.userId},function (err, baskets) {
         if (!err) {
@@ -353,7 +353,7 @@ router.post('/basketToOrderEmailNotify', auth.required,function(req,res){
 });
 
 // Get basket
-router.get('/:id', auth.required, function (req, res) {
+router.get('/:id', function (req, res) {
 
     Basket.findById(req.params.id, function (err, basket) {
 

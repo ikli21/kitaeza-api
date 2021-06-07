@@ -9,7 +9,7 @@ var db = require(libs + 'db/mongoose');
 var ProductCharacteristics = require(libs + 'model/productCharacteristics');
 
 // List all baskets
-router.get('/', auth.required, function (req, res) {
+router.get('/',  function (req, res) {
 
     ProductCharacteristics.find(function (err, productCharacteristics) {
         if (!err) {
@@ -27,7 +27,7 @@ router.get('/', auth.required, function (req, res) {
 });
 
 // List all baskets
-router.get('/productCharacteristicsbyproduct', auth.required, function (req, res) {
+router.get('/productCharacteristicsbyproduct',  function (req, res) {
 
     ProductCharacteristics.find({"product":req.body.product}, function (err, productCharacteristics) {
         if (!err) {
