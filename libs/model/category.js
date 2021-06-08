@@ -16,8 +16,8 @@ var Category = new Schema({
     modified: { type: Date, default: Date.now }
 });
 
-Category.path('title').validate(function (v) {
-    return v.length > 5 && v.length < 70;
-});
+// Category.path('title').validate(function (v) {
+//     return v.length > 5 && v.length < 70;
+// });
 
 module.exports = mongoose.model('Category', Category);

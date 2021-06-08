@@ -21,8 +21,8 @@ var Product = new Schema({
     modified: { type: Date, default: Date.now }
 });
 
-Product.path('title').validate(function (v) {
-    return v.length > 5 && v.length < 70;
-});
+// Product.path('title').validate(function (v) {
+//     return v.length > 5 && v.length < 70;
+// });
 
 module.exports = mongoose.model('Product', Product);
