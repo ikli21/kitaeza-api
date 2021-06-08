@@ -35,7 +35,7 @@ exports.orders_list_get = function (req, res) {
 
 exports.orders_user_get = function (req, res) {
 
-    Order.find({"user":req.body.userId}, function (err, order) {
+    Order.find({"user":req.params.userId}, function (err, order) {
         if (!err) {
             return res.json(order);
         } else {

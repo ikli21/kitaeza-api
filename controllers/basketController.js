@@ -106,6 +106,7 @@ exports.baskets_from_instances_product = async function (req, res) {
                                 
                                 // log.info(arrayProducts);
                             });
+                            
                         })
                         
                     });

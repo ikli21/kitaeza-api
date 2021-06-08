@@ -14,7 +14,7 @@ var order_controller = require(controllers+'orderController');
 router.get('/', order_controller.orders_list_get);
 
 // List all baskets
-router.get('/ordersbyuser',order_controller.orders_user_get  );
+router.get('/ordersbyuser/:userId',order_controller.orders_user_get  );
 
 // Create basket
 router.post('/', auth.required, order_controller.orders_create_post);
