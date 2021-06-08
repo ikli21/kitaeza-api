@@ -28,9 +28,9 @@ router.get('/', async function (req, res) {
     });
 });
 //List Instances by order id
-router.get('/orderId', async function (req, res) {
+router.get('/instancesByOrder/:orderId', async function (req, res) {
 
-    await ProductInstance.find({"order":req.body.orderId},function (err, productInstance) {
+    await ProductInstance.find({"order":req.params.orderId},function (err, productInstance) {
         if (!err) {
             return res.json(productInstance);
         } else {
@@ -45,9 +45,9 @@ router.get('/orderId', async function (req, res) {
     });
 });
 //List instances by basketId
-router.get('/basketId', async function (req, res) {
+router.get('/instancesByBasket/:basketId', async function (req, res) {
 
-    await ProductInstance.find({"basket":req.body.basketId},function (err, productInstance) {
+    await ProductInstance.find({"basket":req.params.basketId},function (err, productInstance) {
         if (!err) {
             return res.json(productInstance);
         } else {
