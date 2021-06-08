@@ -41,8 +41,8 @@ router.get('/listTenProducts',  function (req, res) {
                 error: 'Server error'
             });
         }
-    });
-}).sort({subtitle:1}).limit(10);
+    }).sort({subtitle:1}).limit(10);
+});
 
 // Create basket
 router.post('/', auth.required, function (req, res) {
