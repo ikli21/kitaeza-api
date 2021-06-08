@@ -32,9 +32,9 @@ router.get('/',  function (req, res) {
     });
 });
 // List all baskets by user
-router.get('/basketsbyuser',  function (req, res) {
+router.get('/basketsbyuser/:userId',  function (req, res) {
 
-    Basket.find({"user":req.body.userId},function (err, baskets) {
+    Basket.find({"user":req.params.userId},function (err, baskets) {
         if (!err) {
             return res.json(baskets);
         } else {
