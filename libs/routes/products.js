@@ -27,6 +27,23 @@ router.get('/',  function (req, res) {
     });
 });
 
+router.get('/listTenProducts',  function (req, res) {
+
+    Product.find(function (err, product) {
+        if (!err) {
+            return res.json(product);
+        } else {
+            res.statusCode = 500;
+
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+}).sort({subtitle:1}).limit(10);
+
 // Create basket
 router.post('/', auth.required, function (req, res) {
 
