@@ -173,8 +173,6 @@ exports.basket_to_order_create_post = function(req,res){
     async function addOrder(mSecs){
         return new Promise((resolve,reject)=>{
             Basket.findById(req.body.basketId, async function (err, basket) {
-            
-        
                 if (!basket) {
                     res.statusCode = 404;
         
@@ -213,7 +211,7 @@ exports.basket_to_order_create_post = function(req,res){
                             await ProductInstance.find({"basket":basket.id},async function (err, productInstance) {
                                 if (!err) {
                                     productInstance.forEach(async element  => {
-                                        element.basket = "1";
+                                        element.basket = null;
                                         element.order = order.id;
                                         amountCount+=element.amount;
                                         await element.save(async function (err){
@@ -254,7 +252,7 @@ exports.basket_to_order_create_post = function(req,res){
                                                                     res.statusCode = 400;
                                                                     reject();
                                                                     res.json({
-                                                                        error: 'Validation error'
+                                                                        error: 'Validation error 1'
                                                                     });
                                                                 } else {
                                                                     res.statusCode = 500;
@@ -267,7 +265,8 @@ exports.basket_to_order_create_post = function(req,res){
                                                                 }
                                                             }
                                                         });
-                                                    } 
+                                                    }
+                                                     
                                             else {
                                                 res.statusCode = 500;
                                                 log.error('Internal error(%d): %s', res.statusCode, err.message);
@@ -282,7 +281,7 @@ exports.basket_to_order_create_post = function(req,res){
                                                 if (err.name === 'ValidationError') {
                                                     res.statusCode = 400;
                                                     res.json({
-                                                        error: 'Validation error'
+                                                        error: err
                                                     });
                                                 } else {
                                                     res.statusCode = 500;
@@ -313,7 +312,7 @@ exports.basket_to_order_create_post = function(req,res){
                             if (err.name === 'ValidationError') {
                                 res.statusCode = 400;
                                 res.json({
-                                    error: 'Validation error'
+                                    error: 'Validation error 3'
                                 });
                             } else {
                                 res.statusCode = 500;

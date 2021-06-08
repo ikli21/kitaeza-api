@@ -14,7 +14,7 @@ var ProductInstance = new Schema({
     
     product: {type: Schema.ObjectId, ref: 'Product', required: true},
     order: {type: Schema.ObjectId, ref: 'Order', required: false},
-    basket: {type: Schema.ObjectId, ref: 'Basket', required: true},
+    basket: {type: Schema.ObjectId, ref: 'Basket', required: false},
     amount:{type:Number,required:true,default:0},
     modified: { type: Date, default: Date.now }
 });
