@@ -9,285 +9,44 @@ var log = require(libs + 'log')(module);
 var auth = require("./auth");
 var db = require(libs + 'db/mongoose');
 var ProductInstance = require(libs + 'model/productInstance');
+var controllers = process.cwd() + '/controllers/';
+var product_instances_controller = require(controllers+'productInstanceController');
 
 // List all baskets
-router.get('/', async function (req, res) {
-
-    await ProductInstance.find(function (err, productInstance) {
-        if (!err) {
-            return res.json(productInstance);
-        } else {
-            res.statusCode = 500;
-
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
+router.get('/', product_instances_controller.instances_list_get);
 //List Instances by order id
-router.get('/instancesByOrder/:orderId', async function (req, res) {
-
-    await ProductInstance.find({"order":req.params.orderId},function (err, productInstance) {
-        if (!err) {
-            return res.json(productInstance);
-        } else {
-            res.statusCode = 500;
-
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
+router.get('/instancesByOrder/:orderId', product_instances_controller.instances_order_get);
 //List instances by basketId
-router.get('/instancesByBasket/:basketId', async function (req, res) {
+router.get('/instancesByBasket/:basketId', product_instances_controller.instances_basket_get);
 
-    await ProductInstance.find({"basket":req.params.basketId},function (err, productInstance) {
-        if (!err) {
-            return res.json(productInstance);
-        } else {
-            res.statusCode = 500;
+// router.get('/',async function (req, res) {
 
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
+//     await ProductInstance.find(function (err, productInstance) {
+//         if (!err) {
+//             return res.json(productInstance);
+//         } else {
+//             res.statusCode = 500;
 
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
+//             log.error('Internal error(%d): %s', res.statusCode, err.message);
 
-router.get('/',async function (req, res) {
-
-    await ProductInstance.find(function (err, productInstance) {
-        if (!err) {
-            return res.json(productInstance);
-        } else {
-            res.statusCode = 500;
-
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
+//             return res.json({
+//                 error: 'Server error'
+//             });
+//         }
+//     });
+// });
 // Create basket
-router.post('/', auth.required,async function (req, res) {
-
-    var productInstance = new ProductInstance({
-        // user: req.body.user,
-        // author: req.body.author,
-        product: req.body.product,
-    order: req.body.order,
-    basket: req.body.basket,
-    amount:req.body.amount,
-    
-    });
-
-    await productInstance.save(async function (err) {
-        if (!err) {
-            log.info('New productInstance created with id: %s', productInstance.id);
-             return res.json({
-                status: 'OK',
-                productInstance: productInstance
-            });
-        } else {
-            if (err.name === 'ValidationError') {
-                res.statusCode = 400;
-                res.json({
-                    error: 'Validation error'
-                });
-            } else {
-                res.statusCode = 500;
-
-                log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                res.json({
-                    error: 'Server error'
-                });
-            }
-        }
-    });
-});
+router.post('/', auth.required,product_instances_controller.instances_create_post);
 
 // Get basket
-router.get('/:id', async function (req, res) {
-
-    await ProductInstance.findById(req.params.id,async function (err, productInstance) {
-
-        if (!productInstance) {
-            res.statusCode = 404;
-
-            return res.json({
-                error: 'Not found'
-            });
-        }
-
-        if (!err) {
-            return res.json({
-                status: 'OK',
-                productInstance: productInstance
-            });
-        } else {
-            res.statusCode = 500;
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
+router.get('/:id', product_instances_controller.instances_id_get);
 
 // Update basket
-router.put('/:id', auth.required, async function (req, res) {
-    var productInstanceId = req.params.id;
+router.put('/:id', auth.required, product_instances_controller.instances_id_put);
 
-    await ProductInstance.findById(productInstanceId,async function (err, productInstance) {
-        if (!productInstance) {
-            res.statusCode = 404;
-            log.error('ProductInstance with id: %s Not Found', productInstanceId);
-            return res.json({
-                error: 'Not found'
-            });
-        }
+router.delete('/deleteAllInstancesByBasket', auth.required, product_instances_controller.instances_basket_delete);
 
-        product= req.body.product;
-    order= req.body.order;
-    basket= req.body.basket;
-    amount=req.body.amount;
-    
-        // article.author = req.body.author;
-        // article.images = req.body.images;
-
-        await producInstance.save(async function (err) {
-            if (!err) {
-                log.info('ProductInstance with id: %s updated', productInstance.id);
-                return res.json({
-                    status: 'OK',
-                    productInstance: productInstance
-                });
-            } else {
-                if (err.name === 'ValidationError') {
-                    res.statusCode = 400;
-                    return res.json({
-                        error: 'Validation error'
-                    });
-                } else {
-                    res.statusCode = 500;
-
-                    return res.json({
-                        error: 'Server error'
-                    });
-                }
-                log.error('Internal error (%d): %s', res.statusCode, err.message);
-            }
-        });
-    });
-});
-
-router.delete('/deleteAllInstancesByBasket', auth.required, async function (req, res) {
-    // return new Promise()
-    var basketId = req.body.basketId;
-
-    await ProductInstance.find({"basket":basketId},async function (err, productInstance) {
-        if (!productInstance) {
-            res.statusCode = 404;
-            log.error('ProductInstances with basketid: %s Not Found', basketId);
-            return res.json({
-                error: 'Not found'
-            });
-        }
-
-    //     product= req.body.product;
-    // order= req.body.order;
-    // basket= req.body.basket;
-    // amount=req.body.amount;
-    
-        // article.author = req.body.author;
-        // article.images = req.body.images;
-        await productInstance.forEach(async element =>{
-            await element.delete(async function (err) {
-                if (!err) {
-                    log.info('ProductInstance with id: %s deleted', element.id);
-                    return res.json({
-                        status: 'OK',
-                        // productInstance: productInstance
-                    });
-                } else {
-                    if (err.name === 'ValidationError') {
-                        res.statusCode = 400;
-                        return res.json({
-                            error: 'Validation error'
-                        });
-                    } else {
-                        res.statusCode = 500;
-    
-                        return res.json({
-                            error: 'Server error'
-                        });
-                    }
-                    log.error('Internal error (%d): %s', res.statusCode, err.message);
-                }
-            });
-        });
-        
-    });
-});
-
-router.delete('/deleteInstance', auth.required, async function (req, res) {
-    // return new Promise()
-    var productInstanceId = req.body.productInstanceId;
-
-    await ProductInstance.findById(productInstanceId,async function (err, productInstance) {
-        if (!productInstance) {
-            res.statusCode = 404;
-            log.error('ProductInstance with id: %s Not Found', productInstanceId);
-            return res.json({
-                error: 'Not found'
-            });
-        }
-
-    //     product= req.body.product;
-    // order= req.body.order;
-    // basket= req.body.basket;
-    // amount=req.body.amount;
-    
-        // article.author = req.body.author;
-        // article.images = req.body.images;
-
-        await productInstance.delete(async function (err) {
-            if (!err) {
-                log.info('ProductInstance with id: %s deleted', productInstance.id);
-                return res.json({
-                    status: 'OK',
-                    // productInstance: productInstance
-                });
-            } else {
-                if (err.name === 'ValidationError') {
-                    res.statusCode = 400;
-                    return res.json({
-                        error: 'Validation error'
-                    });
-                } else {
-                    res.statusCode = 500;
-
-                    return res.json({
-                        error: 'Server error'
-                    });
-                }
-                log.error('Internal error (%d): %s', res.statusCode, err.message);
-            }
-        });
-    });
-});
+router.delete('/deleteInstance', auth.required, product_instances_controller.instances_delete_id);
 
 
 module.exports = router;

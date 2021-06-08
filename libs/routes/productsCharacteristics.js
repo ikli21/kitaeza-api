@@ -7,155 +7,21 @@ var log = require(libs + 'log')(module);
 var auth = require("./auth");
 var db = require(libs + 'db/mongoose');
 var ProductCharacteristics = require(libs + 'model/productCharacteristics');
+var controllers = process.cwd() + '/controllers/';
+var product_characteristics_controller = require(controllers+'productCharacteristicsController');
+// List all baskets
+router.get('/',  product_characteristics_controller.characteristics_list_get);
 
 // List all baskets
-router.get('/',  function (req, res) {
-
-    ProductCharacteristics.find(function (err, productCharacteristics) {
-        if (!err) {
-            return res.json(productCharacteristics);
-        } else {
-            res.statusCode = 500;
-
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
-
-// List all baskets
-router.get('/productCharacteristicsbyproduct/:productId',  function (req, res) {
-
-    ProductCharacteristics.find({"product":req.params.productId}, function (err, productCharacteristics) {
-        if (!err) {
-            return res.json(productCharacteristics);
-        } else {
-            res.statusCode = 500;
-
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
+router.get('/productCharacteristicsbyproduct/:productId',  product_characteristics_controller.characteristics_product_id_get);
 
 // Create basket
-router.post('/', auth.required, function (req, res) {
-
-    var productCharacteristics = new ProductCharacteristics({
-        // user: req.body.user,
-        // author: req.body.author,
-        characName:req.body.characName,
-        product:req.body.product,
-        description:req.body.description
-        //// status:
-        // images: req.body.images
-    });
-
-    productCharacteristics.save(function (err) {
-        if (!err) {
-            log.info('New productCharacteristics created with id: %s', productCharacteristics.id);
-            return res.json({
-                status: 'OK',
-                productCharacteristics: productCharacteristics
-            });
-        } else {
-            if (err.name === 'ValidationError') {
-                res.statusCode = 400;
-                res.json({
-                    error: 'Validation error'
-                });
-            } else {
-                res.statusCode = 500;
-
-                log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                res.json({
-                    error: 'Server error'
-                });
-            }
-        }
-    });
-});
+router.post('/', auth.required, product_characteristics_controller.characteristics_create_post);
 
 // Get basket
-router.get('/:id', auth.required, function (req, res) {
-
-    ProductCharacteristics.findById(req.params.id, function (err, productCharacteristics) {
-
-        if (!productCharacteristics) {
-            res.statusCode = 404;
-
-            return res.json({
-                error: 'Not found'
-            });
-        }
-
-        if (!err) {
-            return res.json({
-                status: 'OK',
-                productCharacteristics: productCharacteristics
-            });
-        } else {
-            res.statusCode = 500;
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-            return res.json({
-                error: 'Server error'
-            });
-        }
-    });
-});
+router.get('/:id', auth.required, product_characteristics_controller.characteristics_id_get);
 
 // Update basket
-router.put('/:id', auth.required, function (req, res) {
-    var productCharacteristicsId = req.params.id;
-
-    ProductCharacteristics.findById(productCharacteristicsId, function (err, productCharacteristics) {
-        if (!productCharacteristics) {
-            res.statusCode = 404;
-            log.error('ProductCharacteristics with id: %s Not Found', productCharacteristicsId);
-            return res.json({
-                error: 'Not found'
-            });
-        }
-
-        productCharacteristics.product = req.body.product;
-        productCharacteristics.characName = req.body.characName;
-        productCharacteristics.description = req.body.description;
-        ////status:
-        // article.author = req.body.author;
-        // article.images = req.body.images;
-
-        productCharacteristics.save(function (err) {
-            if (!err) {
-                log.info('productCharacteristics with id: %s updated', productCharacteristics.id);
-                return res.json({
-                    status: 'OK',
-                    productCharacteristics: productCharacteristics
-                });
-            } else {
-                if (err.name === 'ValidationError') {
-                    res.statusCode = 400;
-                    return res.json({
-                        error: 'Validation error'
-                    });
-                } else {
-                    res.statusCode = 500;
-
-                    return res.json({
-                        error: 'Server error'
-                    });
-                }
-                log.error('Internal error (%d): %s', res.statusCode, err.message);
-            }
-        });
-    });
-});
+router.put('/:id', auth.required, product_characteristics_controller.characteristics_id_put);
 
 module.exports = router;
