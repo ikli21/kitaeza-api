@@ -11,7 +11,10 @@ const auth = require(libs+'/routes/auth');
 const User = mongoose.model('User');
 
 exports.user_create_post = async (req, res, next)  => {
-    const { body: { user } } = req;
+  const user = new Object({
+    email: req.body.email,
+    password: req.body.password
+ });
     
     if(!user.email) {
       return res.status(422).json({
@@ -48,7 +51,14 @@ exports.user_create_post = async (req, res, next)  => {
   }
   
   exports.user_login_post =  (req, res, next) => {
-    const { body: { user } } = req;
+    const user = new Object({
+      
+      email: req.body.email,
+      password: req.body.password
+    
+ });
+ var temp = JSON.stringify(user);
+ log.info(temp);
   
     if(!user.email) {
       return res.status(422).json({
