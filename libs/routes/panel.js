@@ -59,6 +59,16 @@ router.get('/admin-panel', async (req, res) => {
     })
 })
 
+router.get('/', async (req, res) => {
+    var product = await sendGetRequest(url + 'products/')
+    res.render('404', {
+        title: 'Панель администрирования',
+        hideHeader,
+        product: product,
+        email
+    })
+})
+
 router.get('/admin-panel/add-category', async (req, res) => {
     var category = await sendGetRequest(url + 'categories/')
     res.render('add-category', {
