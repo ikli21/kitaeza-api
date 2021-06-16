@@ -64,8 +64,7 @@ router.get('/', async (req, res) => {
     res.render('404', {
         title: 'Панель администрирования',
         hideHeader,
-        product: product,
-        email
+        isLoggedIn: false
     })
 })
 
