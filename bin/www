@@ -3,9 +3,9 @@
 var libs = process.cwd() + '/libs/';
 var config = require(libs + 'config');
 var log = require(libs + 'log')(module);
-var app = require(libs + 'app');
+var app = require(process.cwd()+'/app');
 
-app.set('port', process.env.PORT||80);
+app.set('port', process.env.PORT||3000);
 //  || config.get('port') || 3000);
 
 var server = app.listen(app.get('port'), function () {
