@@ -92,7 +92,9 @@ exports.basket_create_post = function (req, res) {
 exports.baskets_from_instances_product = async function (req, res) {
         await ProductInstance.find({"basket":req.params.basketId},async function (err, productInstances) {
             if (!err) {
-                
+                let pinst=await ProductInstance.findOne({"basket":req.params.basketId},function(err,prodInst){if(prodInst!=null){
+                    let bid= prodInst.basket;
+                    log.info(pinst);
                 var data = MongoClient.connect(url, function(err, client) {
                     if (err) throw err;
                     
@@ -115,6 +117,9 @@ exports.baskets_from_instances_product = async function (req, res) {
                       client.close();
                     });
                   });
+                }else{return res.json({error:err})}});
+                // let bid = pinst.basket;
+                
                 
             } else {
                 // reject();
