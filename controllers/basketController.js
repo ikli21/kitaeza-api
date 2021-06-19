@@ -94,7 +94,7 @@ exports.baskets_from_instances_product = async function (req, res) {
             if (!err) {
                 let pinst=await ProductInstance.findOne({"basket":req.params.basketId},function(err,prodInst){if(prodInst!=null){
                     let bid= prodInst.basket;
-                    log.info(pinst);
+                    // log.info(pinst);
                 var data = MongoClient.connect(url, function(err, client) {
                     if (err) throw err;
                     
