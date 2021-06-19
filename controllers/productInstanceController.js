@@ -154,7 +154,7 @@ exports.instances_id_put = async function (req, res) {
         // article.author = req.body.author;
         // article.images = req.body.images;
 
-        await producInstance.save(async function (err) {
+        await productInstance.save(async function (err) {
             if (!err) {
                 log.info('ProductInstance with id: %s updated', productInstance.id);
                 return res.json({
