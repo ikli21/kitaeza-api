@@ -15,7 +15,7 @@ const ProductInstance = require(libs+"model/productInstance");
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const { json } = require('body-parser');
-const { resolve } = require('path/posix');
+// const { resolve } = require('path/posix');
 const e = require('express');
 const User = mongoose.model('User');
 var MongoClient = require('mongodb').MongoClient;
@@ -90,239 +90,16 @@ exports.basket_create_post = function (req, res) {
 }
 
 exports.baskets_from_instances_product = async function (req, res) {
-    // return new Promise((resolve,reject)=>{
-        
-        
         await ProductInstance.find({"basket":req.params.basketId},async function (err, productInstances) {
             if (!err) {
-                // const bid=req.params.basket;
                 
-                // log.info(filtered);
-                // async function isMas(productOne){
-                //     return new Promise((resolve,reject)=>{
-                //         log.info(productOne.id);
-                    
-                //         // log.info(pinst);
-                //         let pinst2 =this.filter(pi=>pi.product==productOne.id);
-                //         if(pinst2.length==0){return resolve(false)}
-                        
-                //         else if(pinst2.length!=0){
-                //             log.info(JSON.stringify(pinst2));
-                //             return resolve(true);
-                //         }
-                //     });
-                    
-                //     // if(pinst2.length!=0){
-                //     //     log.info("OkeYDokey");
-                //     //     return true;
-                //     // }
-                //     // return false;
-                //     // await pinst.forEach(async element=>{
-                //     //     log.info('started');
-                //     //     if(element.product === productOne._id){
-                //     //         log.info(productOne._id,element.product);
-                //     //         return true;
-                //     //     }
-                //     // });
-                //     // for(i=0;i<pinst.length;i++){
-                //     //     for(j=0;j<products.length;j++){
-                //     //         if(pinst[i].product===products[j]._id){
-                //     //             log.info(pinst[i]);
-                //     //             log.info("Ok");
-                //     //             return true;
-                //     //         }
-                //     //         else{log.info("Ok");
-                //     //             return false}
-                //     //     }
-                        
-                //     // }
-                // }
-                // // var arrayProducts = [];
-                // async function arrayAdder(){
-                //     return new Promise((resolve,reject)=>{
-                //         productInstances.forEach(async element=>{
-                //             log.info(element);
-                //             await Product.findById(element.product,async function(err, product){
-                                
-                //                 arrayProducts.unshift(product);
-                //                 log.info(arrayProducts);
-                //                 resolve(arrayProducts);
-                                
-                //             });
-                            
-                //         })
-                        
-                //     });
-                    
-                    
-                // }
-                // let jsArr = await arrayAdder();
-                // log.info(jsArr);
-                // let result = await arrayAdder();
-                let pinst=await ProductInstance.findOne({"basket":req.params.basketId});
-                let bid = pinst.basket;
-                log.info(bid);
-                // log.info(pinst);
-                // let pinst2 = pinst.filter(pi=>pi.product=="60be6c379102300015af8f5c");
-                // log.info(pinst2);
-                // log.info(pinst);
-                var productos = await  Product.find();
-                let idlist={};
-                
-                var hmui =productos.map(function(e){
-                    
-                    // var pinst= new Array( ProductInstance.find({"basket":req.params.basketId}));
-                    // log.info(pinst);
-                    // let pinst2 = {};
-                    // for (i in pinst) {
-                    //     let inst = pinst[i]
-                    //     // Ниже условие фильтрации
-                    //     if (pinst.product === e.id) {
-                    //       pinst2[i] = inst
-                    //     }
-                    // }
-                    // log.info(pinst2);
-                    // log.info(pinst);
-                    
-                    let instanc= ProductInstance.findOne({"basket":req.params.basketId,"product":e.id}, function(singleInst){
-                        if(singleInst!=null){
-                            return singleInst.product;
-                        };
-                    });
-                    // log.info(instanc);
-                    if(instanc!=null){
-                        // log.info(instanc.id)
-                        return e;
-                    }
-                    else {
-                        return null;
-                    }
-                    
-                    // if(instanc!=null){
-                    //     log.info(instanc.product)
-                        
-                    // }
-                    
-                    // let pinst2 = pinst.filter(async pi=>pi.product==e.id);
-                    // log.info(pinst2.length)
-                    // if(e.id===pinst.product){
-                    //     idlist.push(e)
-                    // }
-                    // // let i = parseInt(pinst2.length);
-                    // let i = 0;
-                    // for(i in pinst2){
-                    //     let identi = pinst2[i].product;
-                    //     // log.info(identi);
-                    //     idlist[i] = identi;
-                    //     log.info(i);
-                    //     return e.id===idlist[i];
-                    // }
-                    
-                    // for(i=0;i<pinst2.length; pinst2){
-                    //     // log.info(pinst2)
-                        
-                        
-                    // }
-                    
-                    // return idlist;
-
-                    
-                    // return pinst2;
-                
-                    
-                    });
-
-                // var tryal =productos.filter(e=>e.id== new Promise((resolve,reject)=>{
-                //         let pinst=  ProductInstance.find({"basket":req.params.basketId});
-                //         let pinst2 = pinst.filter(pi=>pi.product==e.id);
-                //         log.info(pinst2);
-                //         resolve(pinst2.product);
-                //     })
-                    
-                // )
-                async function huyNa(prods){
-                    var mas = [];
-                    let pinst = await ProductInstance.find({"basket":req.params.basketId});
-                    for (var a in prods){
-                        for(var b in pinst){
-                            if(a.id==b.product){
-                                mas.push(prods[a]);
-                                log.info(a.title);
-                                log.info(mas);
-                            }
-                        }
-                    }
-                    return mas;
-                }
-                // var pizd = huyNa(productos);
-                async function deBil(productos, msecs){
-                    await productos.map(async function(e){
-                        return new Promise(async(resolve,reject)=>{
-                            let pinst=await ProductInstance.find({"basket":req.params.basketId});
-                        let pinst2 =await pinst.filter(async pi=>pi.product==e.id);
-                        // log.info(pinst2);
-                        if(e.id==pinst2[1].product){
-                            // log.info(e);
-                            setTimeout(() => {
-                                resolve(JSON.stringify(e));
-                            }, msecs);
-                            // resolve(json(e));
-                        }
-                        else if(pinst.length==0){
-                            reject();
-                        }
-                        })
-                        // log.info(e);
-                        
-                    });
-                }
-                // const filtr = await deBil(productos, 3000);
-                // log.info(filtr);
-                var filtered2 = await productos.filter(async pOne=>{
-                    let pinst= await  ProductInstance.find({"basket":req.params.basketId});
-                    let pinst2 = await pinst.filter(async pi=>pi.product==pOne.id);
-                    if(pinst2.length==0){
-                        return false;
-                    }
-                    return true;
-                    log.info(pinst2);
-                    pOne.id==pinst2.product;
-                    if(pinst2.length==0){return false}
-                    return pOne;
-                });
-                function returnProm(){
-                    return new Promise((resolve,reject)=>{
-                        let pidr=deBil(productos,3000)
-                        log.info(pidr);
-                        // resolve(pidr);
-                        setTimeout(() => {
-                            resolve(pidr);
-                        }, 5000);
-                    })
-                    
-                }
-                // let kal = await returnProm();
-                // log.info(kal)
-                // const filtered = await  products.filter(async function (pOne){
-                //     let pinst2 =await this.filter(pi=>pi.product==pOne.id);
-                //     if(pinst2.length==0){return false}
-                    
-                //     else if(pinst2.length!=0){
-                //         log.info(JSON.stringify(pinst2));
-                //         return true;
-                //     }
-                // } 
-                //     ,pinst);
-                // log.info(filtered2);
-                
-                // return res.json(hmui);
                 var data = MongoClient.connect(url, function(err, client) {
                     if (err) throw err;
-                    // var dbo = db.db("kitaezaapidb");
+                    
                     var db = client.db('myFirstDatabase')
                     db.collection('productinstances').aggregate([
                     {$match:{basket:bid}},
-                    // {   $unwind:{ path: "$baskets", preserveNullAndEmptyArrays: true }},
+                    
                     { $lookup:
                         {
                           from: 'products',
@@ -338,39 +115,6 @@ exports.baskets_from_instances_product = async function (req, res) {
                       client.close();
                     });
                   });
-                // let data = ProductInstance.aggregate([
-                //     // {_id:req.params.basketId},
-                //     { $lookup:
-                //        {
-                //          from: 'Product',
-                //          localField: 'product',
-                //          foreignField: '_id',
-                //          as: 'instanceDetails'
-                //        }
-                //      }
-                //     ])
-                // return res.json(data);
-                
-                // productInstances.forEach(async element=>{
-                //     arrayAdder(element);
-                // })
-                // productInstances.forEach(async element  => {
-                //     await Product.findById(element.product,async function(err, product){
-                //         // log.info(product);
-                //         arrayProducts.push(product);
-                        
-                //         // var secArr = JSON.stringify(arrayProducts);
-                //         // log.info(secArr);
-                //         return res.json(arrayProducts);
-                        
-                //         // log.info(arrayProducts);
-                //     });
-                // //    productsOfInstances =;
-                // });
-                // return res;
-                // setTimeout(() => {
-                //     resolve(arrayProducts);
-                // }, 2000);
                 
             } else {
                 // reject();
