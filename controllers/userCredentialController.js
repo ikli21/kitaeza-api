@@ -4,11 +4,14 @@ var log = require(libs + 'log')(module);
 var async = require('async');
 var express = require('express');
 var passport = require('passport');
+const { findOne } = require('../libs/model/userCredential');
 // const userCredential = require('../model/userCredential');
 var router = express.Router();
 var auth = require(libs+"routes/auth");
 var db = require(libs + 'db/mongoose');
 var UserCredential = require(libs + 'model/userCredential');
+var controllers = process.cwd() + '/controllers/';
+var user_controller = require(controllers+'userController');
 
 exports.credentials_id_get = function (req, res) {
 
@@ -37,6 +40,62 @@ exports.credentials_id_get = function (req, res) {
         }
     });
 }
+
+exports.credentials_id_user_get = function (req, res) {
+
+    UserCredential.findOne({"user":req.params.userId}, function (err, userCredential) {
+
+        if (!userCredential) {
+            res.statusCode = 404;
+
+            return res.json({
+                error: 'Not found'
+            });
+        }
+
+        if (!err) {
+            return res.json({
+                status: 'OK',
+                userCredential: userCredential
+            });
+        } else {
+            res.statusCode = 500;
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+}
+
+// exports.credentials_email_user_get = function (req, res) {
+//     let user = user_controller.user_current_get;
+//     UserCredential.find({}req.params.email, function (err, userCredential) {
+
+//         if (!userCredential) {
+//             res.statusCode = 404;
+
+//             return res.json({
+//                 error: 'Not found'
+//             });
+//         }
+
+//         if (!err) {
+//             return res.json({
+//                 status: 'OK',
+//                 userCredential: userCredential
+//             });
+//         } else {
+//             res.statusCode = 500;
+//             log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+//             return res.json({
+//                 error: 'Server error'
+//             });
+//         }
+//     });
+// }
 
 exports.credentials_list_get = function (req, res) {
 

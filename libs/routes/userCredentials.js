@@ -22,4 +22,8 @@ router.get('/:id',  credentials_controller.credentials_id_get);
 // Update basket
 router.put('/:id', auth.required, credentials_controller.credentials_id_put);
 
+router.get('/credsbyuserid/:userId', auth.required,credentials_controller.credentials_id_user_get);
+
+// router.get('/credsbyuseremail/:email', auth.required,credentials_controller.credentials_email_user_get);
+
 module.exports = router;
