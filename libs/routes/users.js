@@ -15,4 +15,6 @@ router.post('/login', auth.optional,user_controller.user_login_post);
 //GET current route (required, only authenticated users have access)
 router.get('/current', auth.required, user_controller.user_current_get);
 
+router.post('/createAdmin', auth.optional, user_controller.admin_create_post);
+
 module.exports = router;

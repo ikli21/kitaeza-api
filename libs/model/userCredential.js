@@ -14,7 +14,7 @@ var UserCredential = new Schema({
     
     // productInstance: {type: Schema.ObjectId, ref: 'ProductInstance', required: true},
     user: {type: Schema.ObjectId, ref: 'User', required: true},
-    email: {type: String, required: true,default:"example@mail.ru"},
+    email: {type: String, required: false,default:"example@mail.ru"},
     vkontakte: {type: String, required: false,default:"Не добавлено"},
     telegram: {type: String, required: false,default:"Не добавлено"},
     whatsapp: {type: String, required: false,default:"Не добавлено"},
