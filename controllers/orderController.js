@@ -15,6 +15,8 @@ const ProductInstance = require(libs+"model/productInstance");
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
+var MongoClient = require('mongodb').MongoClient;
+var url="mongodb+srv://defuser:1234@kitaezaapidb.tg8rf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 exports.orders_list_get = function (req, res) {
 
