@@ -17,6 +17,7 @@ exports.user_create_post = async (req, res, next)  => {
     email: req.body.email,
     password: req.body.password
  });
+ var credId;
     
     if(!user.email) {
       return res.status(422).json({
@@ -61,7 +62,7 @@ exports.user_create_post = async (req, res, next)  => {
                 userCred.save(function(err){
                   if(!err){
                     log.info('new usercred created with id:%s', userCred.id);
-                    
+                    // return credId = userCred.id;
                   }
                   else if(err.name==='ValidationError'){res.statusCode=400;res.json({error:err})}
                   else {res.statusCode=500;log.error('Внутренняя ошибка'+ res.statusCode + err.message);res.json({error:err})}
@@ -88,7 +89,9 @@ exports.user_create_post = async (req, res, next)  => {
             }
         });
          })
-          .then(() => res.json({ user: finalUser.toAuthJSON() }));
+          .then(() => res.json({ user: finalUser.toAuthJSON()
+            // , credentials:{credId}
+          } ));
       }
   });
     

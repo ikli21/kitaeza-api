@@ -95,7 +95,7 @@ exports.baskets_from_instances_product = async function (req, res) {
                 let pinst=await ProductInstance.findOne({"basket":req.params.basketId},function(err,prodInst){if(prodInst!=null){
                     let bid= prodInst.basket;
                     // log.info(pinst);
-                var data = MongoClient.connect(url, function(err, client) {
+                    var data = MongoClient.connect(url, function(err, client) {
                     if (err) throw err;
                     
                     var db = client.db('myFirstDatabase')
@@ -220,7 +220,7 @@ exports.basket_to_order_create_post = function(req,res){
                                                                 log.info('product updated, id:',product.id);
                                                                 table += ('<tr>');
                                                             table += ('<td>' + product.title + '</td>');
-                                                            table += ('<td><img src="' + emailInstanceImage + '"></td>');
+                                                            table += ('<td><img src="' + product.imageurl + '"></td>');
                                                             table += ('<td>' + element.amount + '</td>');
                                                             table += ('</tr>');
                                                             log.info(table);
@@ -338,21 +338,12 @@ exports.basket_to_order_create_post = function(req,res){
         <ul>
         <li>Компания: ИП Аверьянов Д.О.</li>
         <li>Email: kitaeza@mail.ru</li>
-        <li>Телефон: 2282228228</li>
+        <li>Телефон: 89228281855</li>
         </ul>
         <h3>Сообщение</h3>
         <p>Ваш заказ успешно зарезервирован</p>
         `+table+('</table>');
         log.info(output);
-          
-        //   <h3>Headers</h3>
-        // <ul>  
-        //   <li>cookie: ${req.headers.cookie}</li>
-        //   <li>user-agent: ${req.headers["user-agent"]}</li>
-        //   <li>referer: ${req.headers["referer"]}</li>
-        //   <li>IP: ${req.ip}</li>
-        // </ul>
-        
         let smtpTransport;
         try {
             smtpTransport = nodemailer.createTransport({
@@ -369,11 +360,11 @@ exports.basket_to_order_create_post = function(req,res){
         }
         
         let mailOptions = {
-            from: 'sergej.sergeevbo@mail.ru', // sender address
-            to: emailUser, // list of receivers
-            subject: 'У вас новый заказ!', // Subject line
-            text: 'Пожалуйста свяжитесь с нами, если это ваш заказ', // plain text body
-            html: output // html body
+            from: 'sergej.sergeevbo@mail.ru', 
+            to: emailUser, 
+            subject: 'У вас новый заказ!', 
+            text: 'Пожалуйста свяжитесь с нами, если это ваш заказ',
+            html: output
         };
         
         smtpTransport.sendMail(mailOptions, (error, info) => {
@@ -385,7 +376,7 @@ exports.basket_to_order_create_post = function(req,res){
             console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
             }
         res.render('feed-ok', {msg: 'В ближайшее время мы с Вами свяжемся и ответим на все вопросы'});
-        res.redirect('http://baedeker.club');
+        res.redirect('http://kitaeza-api.herokuapp/api');
     });
     return res.json({
         status:"ok"
