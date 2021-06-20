@@ -33,6 +33,53 @@ exports.orders_list_get = function (req, res) {
     });
 }
 
+exports.orders_from_instances_product = async function (req, res) {
+    await ProductInstance.find({"order":req.params.orderId},async function (err, productInstances) {
+        if (!err) {
+            let pinst=await ProductInstance.findOne({"order":req.params.orderId},function(err,prodInst){if(prodInst!=null){
+                let bid= prodInst.order;
+                // log.info(pinst);
+                var data = MongoClient.connect(url, function(err, client) {
+                if (err) throw err;
+                
+                var db = client.db('myFirstDatabase')
+                db.collection('productinstances').aggregate([
+                {$match:{order:bid}},
+                
+                { $lookup:
+                    {
+                      from: 'products',
+                      localField: 'product',
+                      foreignField: '_id',
+                      as: 'instanceDetails'
+                    }
+                  }
+                  ]).toArray(function(err, resp) {
+                  if (err) throw err;
+                  log.info(JSON.stringify(resp));
+                  return res.json(resp)
+                  client.close();
+                });
+              });
+            }else{return res.json({error:err})}});
+            // let bid = pinst.basket;
+            
+            
+        } else {
+            // reject();
+            res.statusCode = 500;
+
+            log.error('Internal error(%d): %s', res.statusCode, err.message);
+            
+            return res.json({
+                error: 'Server error'
+            });
+        }
+    });
+// });
+
+}
+
 exports.orders_user_get = function (req, res) {
 
     Order.find({"user":req.params.userId}, function (err, order) {
@@ -115,7 +162,6 @@ exports.order_id_get = function (req, res) {
 
 exports.orders_id_put = function (req, res) {
     var orderId = req.params.id;
-
     Order.findById(orderId, function (err, order) {
         if (!order) {
             res.statusCode = 404;

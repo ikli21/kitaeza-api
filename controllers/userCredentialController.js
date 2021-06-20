@@ -158,7 +158,11 @@ exports.credentials_create_post = function (req, res) {
 
 exports.credentials_id_put = function (req, res) {
     var userCredentialId = req.params.id;
-
+    const { payload: { email } } = req;
+    // log.info(role);
+    // if(role!=='Админ'||role==null){
+    //     return res.json({error:'Вы не администратор, чтобы выполнять данный запрос'})
+    // }
     UserCredential.findById(userCredentialId, function (err, userCredential) {
         if (!userCredential) {
             res.statusCode = 404;
@@ -168,7 +172,7 @@ exports.credentials_id_put = function (req, res) {
             });
         }
 
-        userCredential.email= req.body.email;
+        userCredential.email= email;
     userCredential.viber= req.body.viber;
     userCredential.telegram= req.body.telegram;
    userCredential.name = req.body.name;

@@ -22,7 +22,11 @@ exports.category_list = async function(req, res, next) {
     });
   };
   exports.category_create_post = async function (req, res) {
-
+    const { payload: { role } } = req;
+    log.info(role);
+    if(role!=='Админ'||role==null){
+        return res.json({error:'Вы не администратор, чтобы выполнять данный запрос'})
+    }
     var category = new Category({
         // user: req.body.user,
         // author: req.body.author,
@@ -90,7 +94,11 @@ exports.category_id_get = async function (req, res) {
 }
 exports.category_id_update_put = async function (req, res) {
     var categoryId = req.params.id;
-
+    const { payload: { role } } = req;
+    log.info(role);
+    if(role!=='Админ'||role==null){
+        return res.json({error:'Вы не администратор, чтобы выполнять данный запрос'})
+    }
     await Category.findById(categoryId,async function (err, category) {
         if (await !category) {
             res.statusCode = 404;

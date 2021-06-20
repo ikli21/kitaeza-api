@@ -12,6 +12,34 @@ const User = mongoose.model('User');
 var UserCredential = require(libs + 'model/userCredential');
 var Basket = require(libs + 'model/basket');
 
+exports.admin_create_post =  async (req, res, next)  => {
+  const user = new Object({
+    email: req.body.email,
+    password: req.body.password,
+    role: 'Админ'
+ });
+ if(!user.email) {
+  return res.status(422).json({
+    errors: {
+      email: 'is required',
+    },
+  });
+}
+
+if(!user.password) {
+  return res.status(422).json({
+    errors: {
+      password: 'is required',
+    },
+  });
+}
+const finalUser = new User(user);
+  
+        await finalUser.setPassword(user.password);
+      
+        return await finalUser.save().then(() => res.json({ user: finalUser.toAuthJSON()}));
+}
+
 exports.user_create_post = async (req, res, next)  => {
   const user = new Object({
     email: req.body.email,
@@ -96,7 +124,71 @@ exports.user_create_post = async (req, res, next)  => {
   });
     
   }
-  
+  // Basket.findOne({'user':user._id}, function (err, basket) {
+
+  //   if (!basket) {
+  //       res.statusCode = 404;
+
+  //       return res.json({
+  //           error: 'Not found'
+  //       });
+  //   }
+    
+  //   else{
+  //     if (!err) {
+  //       log.info(basket._id);
+  //       if(basket._id!=null){
+  //         user.token = passportUser.generateJWT(
+  //           // basket._id
+  //           );
+        
+  //         return res.json({ user: user.toAuthJSON(
+  //           // basket._id
+  //           ) });
+  //       }
+  //       else{return res.json({error:'У пользователя нет корзины, ошибка создания пользователя'})}
+        
+  //     } else {
+  //         res.statusCode = 500;
+  //         log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+  //         return res.json({
+  //             error: 'Server error'
+  //         });
+  //     }
+  //   }
+  // });
+
+  // Basket.findOne({'user':user._id}, function (err, basket) {
+
+  //   if (!basket) {
+  //       res.statusCode = 404;
+
+  //       return res.json({
+  //           error: 'Not found'
+  //       });
+  //   }
+    
+  //   else{
+  //     if (!err) {
+  //       log.info(basket._id);
+  //       if(basket._id!=null){
+  //         user.token = passportUser.generateJWT(basket._id);
+        
+  //         return res.json({ user: user.toAuthJSON(basket._id) });
+  //       }
+  //       else{return res.json({error:'У пользователя нет корзины, ошибка создания пользователя'})}
+        
+  //     } else {
+  //         res.statusCode = 500;
+  //         log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+  //         return res.json({
+  //             error: 'Server error'
+  //         });
+  //     }
+  //   }
+  // });
   exports.user_login_post =  (req, res, next) => {
     const user = new Object({
       
@@ -130,6 +222,7 @@ exports.user_create_post = async (req, res, next)  => {
   
       if(passportUser) {
         const user = passportUser;
+        
         user.token = passportUser.generateJWT();
   
         return res.json({ user: user.toAuthJSON() });
@@ -139,15 +232,16 @@ exports.user_create_post = async (req, res, next)  => {
     })(req, res, next);
   }
 
-  exports.user_current_get = (req, res, next) => {
+  // exports.admin_login = async(req,res, next)=>{
+    
+  // }
+
+  exports.user_current_get = async (req, res, next) => {
     const { payload: { id } } = req;
-  
-    return User.findById(id)
-      .then((user) => {
-        if(!user) {
-          return res.sendStatus(400);
-        }
-  
-        return res.json({ user: user.toAuthJSON() });
-      });
+    
+    const user = await User.findById(id);
+    if (!user) {
+      return res.sendStatus(400);
+    }
+    return res.json({ user: user.toAuthJSON() });
   }
