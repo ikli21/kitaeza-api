@@ -25,4 +25,6 @@ router.get('/:id',  order_controller.order_id_get);
 // Update basket
 router.put('/:id', auth.required, order_controller.orders_id_put);
 
+router.get('/instancesWithProductByOrderId/:orderId', order_controller.orders_from_instances_product)
+
 module.exports = router;
