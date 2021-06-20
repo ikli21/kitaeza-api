@@ -9,6 +9,8 @@ const passport = require('passport');
 const router = require('express').Router();
 const auth = require(libs+'/routes/auth');
 const User = mongoose.model('User');
+var UserCredential = require(libs + 'model/userCredential');
+var Basket = require(libs + 'model/basket');
 
 exports.user_create_post = async (req, res, next)  => {
   const user = new Object({
@@ -43,7 +45,49 @@ exports.user_create_post = async (req, res, next)  => {
   
         await finalUser.setPassword(user.password);
       
-        return await finalUser.save()
+        return await finalUser.save().then(fu=>{
+          log.info(fu.id);
+          var basket = new Basket({
+            user: fu.id,
+            // author: req.body.author,
+            // description: req.body.description,
+            // images: req.body.images
+        });
+    
+        basket.save(function (err) {
+            if (!err) {
+                log.info('New basket created with id: %s', basket.id);
+                var userCred = new UserCredential({email:fu.email,user:fu.id})
+                userCred.save(function(err){
+                  if(!err){
+                    log.info('new usercred created with id:%s', userCred.id);
+                    
+                  }
+                  else if(err.name==='ValidationError'){res.statusCode=400;res.json({error:err})}
+                  else {res.statusCode=500;log.error('Внутренняя ошибка'+ res.statusCode + err.message);res.json({error:err})}
+                });
+                // return res.json({
+                //     status: 'OK',
+                //     basket: basket
+                // });
+            } else {
+                if (err.name === 'ValidationError') {
+                    res.statusCode = 400;
+                    res.json({
+                        error: 'Validation error'
+                    });
+                } else {
+                    res.statusCode = 500;
+    
+                    log.error('Internal error(%d): %s', res.statusCode, err.message);
+    
+                    res.json({
+                        error: 'Server error'
+                    });
+                }
+            }
+        });
+         })
           .then(() => res.json({ user: finalUser.toAuthJSON() }));
       }
   });

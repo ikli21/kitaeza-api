@@ -21,7 +21,7 @@ var UserCredential = new Schema({
     viber: {type: String, required: false,default:"Не добавлено"},
     name:{type:String,default:"Не добавлено"},
     surname:{type:String,default:"Не добавлено"},
-    
+    imagerul:{type:String,default:"Нет фото"},
     // order: {type: Schema.ObjectId, ref: 'Order', required: true},
     // basket: {type: Schema.ObjectId, ref: 'Basket', required: true},
     // amount:{type:Int32Array,required:true,default:0},

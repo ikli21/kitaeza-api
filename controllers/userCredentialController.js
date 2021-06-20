@@ -67,7 +67,8 @@ exports.credentials_create_post = function (req, res) {
     surname: req.body.surname,
     telegram:req.body.telegram,
     whatsapp:req.body.whatsapp,
-        viber: req.body.viber
+        viber: req.body.viber, 
+        imageurl:req.body.imageurl
     });
 
     userCredential.save(function (err) {
@@ -115,7 +116,7 @@ exports.credentials_id_put = function (req, res) {
    userCredential.surname = req.body.surname;
     userCredential.whatsapp=req.body.whatsapp;
     userCredential.vkontakte=req.body.vkontakte;
-        
+        userCredential.imageurl = req.body.imageurl;
         // article.author = req.body.author;
         // article.images = req.body.images;
 
